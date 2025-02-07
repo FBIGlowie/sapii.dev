@@ -6,6 +6,6 @@ title = 'Friends'
 
 # Lovely People I know
 
-### Rogan --> notrogan.dev
+### Rogan --> notrogan.com
 
 ### Fekie --> fekie.dev
