@@ -1,6 +1,6 @@
 baseURL = 'sapii.dev'
 title = "Sapii's Blog"
-copyright = "© 2024 - Sapi or Sapii - This work is licensed under a <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/' rel='license'>Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>."
+copyright = "© 2025 - Sapi or Sapii - This work is licensed under a <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/' rel='license'>Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>."
 canonifyurls = true
 languageCode = "en-US"
 paginate = 3

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<meta charset="utf-8" />
+<meta name="author" content="Sapii" />
+
+<meta name="description" content="Sapii&#39;s Blog" />
+
+<meta name="keywords" content="blog, tech, hacking, rev, web, pwn, ctf" />
+
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name="generator" content="Hugo 0.136.5">
+
+<link rel="canonical" href="//localhost:1313/blog/organizing_nixos/">
+<meta property="og:url" content="//localhost:1313/blog/organizing_nixos/">
+  <meta property="og:site_name" content="Sapii&#39;s Blog">
+  <meta property="og:title" content="Organizing NixOS ">
+  <meta property="og:description" content="Organizing NixOS Hello, the goal of this blog is being some guidelines for new NixOS users based on my experiences on “making a modular config”. You can of course organize it anyway you want. However, for most people it may cause decision paralysis 😭.
+Where you are Let’s assume you have a base configuration of already setup with flakes and home manager. We’ll also assume you want multiple computers using one configuration, such as a home lab and your desktop.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-11-21T00:37:34-05:00">
+    <meta property="article:modified_time" content="2024-11-21T00:37:34-05:00">
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Organizing NixOS ">
+  <meta name="twitter:description" content="Organizing NixOS Hello, the goal of this blog is being some guidelines for new NixOS users based on my experiences on “making a modular config”. You can of course organize it anyway you want. However, for most people it may cause decision paralysis 😭.
+Where you are Let’s assume you have a base configuration of already setup with flakes and home manager. We’ll also assume you want multiple computers using one configuration, such as a home lab and your desktop.">
+
+
+  <meta itemprop="name" content="Organizing NixOS ">
+  <meta itemprop="description" content="Organizing NixOS Hello, the goal of this blog is being some guidelines for new NixOS users based on my experiences on “making a modular config”. You can of course organize it anyway you want. However, for most people it may cause decision paralysis 😭.
+Where you are Let’s assume you have a base configuration of already setup with flakes and home manager. We’ll also assume you want multiple computers using one configuration, such as a home lab and your desktop.">
+  <meta itemprop="datePublished" content="2024-11-21T00:37:34-05:00">
+  <meta itemprop="dateModified" content="2024-11-21T00:37:34-05:00">
+  <meta itemprop="wordCount" content="514">
+
+<link rel="stylesheet" href="//localhost:1313/css/layout.css" />
+
+
+<link rel="stylesheet" href="//localhost:1313/css/default-dark.css" />
+
+
+
+
+<title>
+
+
+     Organizing NixOS  
+
+</title>
+
+</head>
+
+
+<body>
+<div class="main">
+<header>
+
+<div class="header-bar">
+
+  <nav>
+    <div class="siteTitle">
+      <a href="//localhost:1313/">Sapii&#39;s Blog</a>
+    </div> 
+
+    
+    
+    <a class="nav-item" href="//localhost:1313/friends"><div class="nav-item-title">Friends</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/about"><div class="nav-item-title">About</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/blog/"><div class="nav-item-title">Blog</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/tags/"><div class="nav-item-title">Tags</div></a>
+    
+
+  </nav>
+
+</div>
+
+</header>
+
+
+<article class="post">
+    <h1 class="title"> Organizing NixOS  </h1>
+    <div class="content"> <h1 id="organizing-nixos">Organizing NixOS</h1>
+<p>Hello, the goal of this blog is being some guidelines for new NixOS users based on my experiences on <strong>&ldquo;making a modular config&rdquo;</strong>. You can of course organize it anyway you want. However, for most people it may cause decision paralysis 😭.</p>
+<h2 id="where-you-are">Where you are</h2>
+<p>Let&rsquo;s assume you have a base configuration of already setup with flakes and home manager. We&rsquo;ll also assume you want multiple computers using one configuration, such as a home lab and your desktop.</p>
+<div class="highlight"><pre tabindex="0" style="color:#ebdbb2;background-color:#282828;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#fe8019">[</span>user@nixos<span style="color:#fe8019">]</span>$ ls /etc/nixos
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>flake.nix 
+</span></span><span style="display:flex;"><span>flake.lock 
+</span></span><span style="display:flex;"><span>configuration.nix 
+</span></span><span style="display:flex;"><span>hardware-configuration.nix
+</span></span><span style="display:flex;"><span>home.nix
+</span></span></code></pre></div><h2 id="separating">Separating</h2>
+<p>You will definitely want folders that separate your home configurations from each other as well as from your systems. You also want to separate where you keep your modules and pkgs.</p>
+<h3 id="module-separation">Module Separation</h3>
+<ul>
+<li>
+<p>Firstly, create a folder for your modules like <code>/etc/nixos/modules </code>.</p>
+</li>
+<li>
+<p>Separate home specific modules from system ones ( because home manager provides some options not available in system config and vice versa ). Folders like  <code>modules/home</code> for home configurations and  <code> modules/nixos</code> or  <code>modules/system</code> for system configurations.</p>
+</li>
+<li>
+<p>It&rsquo;s also good idea to have a folder for modules every system needs like <code>modules/global</code>. Here I like to keep a file like <code>global.nix</code> or functions that I add to <code>lib</code> to be used in any file.</p>
+</li>
+</ul>
+<h3 id="home-separation">Home Separation</h3>
+<ul>
+<li>
+<p>Make a folder for home configurations like <code>/etc/nixos/home</code> or <code>/etc/nixos/users</code>.</p>
+</li>
+<li>
+<p>Since every user will be on a system, it&rsquo;s probably best to make a connection between systems and users. You can name the folders like <code>/home/docker@homelab</code> or <code>/home/docker-homelab</code> so you don&rsquo;t end up with 4 folders for one user yet all for separate systems 😭.</p>
+</li>
+<li>
+<p>If you do decide to use home manager standalone via <code>home-manager.lib.homeManagerConfiguration</code> in the flake or any other way, it&rsquo;s quite similar but you can specify a location say in your <code>/home</code> and use different tools for rebuilding user config.</p>
+</li>
+<li>
+<p>Inside each home folder, you can make a folder for dotfiles and either manage them via GNU Stow or leave them unorganized and symlink them info place with  a option like <code>home.file.&quot;.bashrc&quot;.source = ./dotfiles/bash/bashrc;</code>.</p>
+</li>
+<li>
+<p>For servers, such as a home lab, it&rsquo;s better to a more much &ldquo;declarative&rdquo; user management so I recommend you either don&rsquo;t use home manager or don&rsquo;t use it standalone.</p>
+</li>
+</ul>
+<h3 id="system-separation">System Separation</h3>
+<ul>
+<li>
+<p>You can separate system definitions inside a <code>/etc/nixos/systems</code> or <code>/etc/nixos/nixos</code> folder, we&rsquo;ll go with <code>systems/</code>.</p>
+</li>
+<li>
+<p>You can just use the hostname for every folder like <code>systems/desktop</code> and <code>systems/homelab</code>.</p>
+</li>
+</ul>
+<h3 id="secrets">Secrets</h3>
+<ul>
+<li>Just keep secrets in a folder like <code>/etc/nixos/secrets</code> and use whatever tool you want.</li>
+</ul>
+<h3 id="pkgs">Pkgs</h3>
+<ul>
+<li>I&rsquo;d say just have a folder named <code>pkgs</code> and put stuff there.</li>
+</ul>
+<h2 id="closing-thoughts">Closing thoughts</h2>
+<p>It may take you multiple restructures and refactors to make a &ldquo;perfect&rdquo; config. It&rsquo;s ample you first start defining variables like system and hostnames then pivot to defining options in modules.</p>
+<p><strong>Remember that nixos requires a default.nix to exist in every folder and that every file should be committed to local git repo, otherwise you get file not found error upon rebuild</strong></p>
+<p>These guidelines here are what I followed for my config structure and have worked for me so I hope they work for you.</p>
+<p>Now go get started!!!</p>
+ </div>
+    <footer class="post-footer">
+
+  <div class="post-footer-data">
+            
+<div class="tags">
+  
+</div>
+
+    
+    <hr>
+    
+    <div class="date"> Published: 2024-11-21</div>
+    <div class="updated"> Updated:   2024-11-21</div>
+  </div>
+</footer>
+
+
+
+</article>
+
+  <footer>
+
+  <div class="social-links-footer">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <div class="social-link">
+  
+  </div>
+
+</div>
+
+
+  <div class="copyright"> 
+    
+      © 2025 - Sapi or Sapii - This work is licensed under a <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/' rel='license'>Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+    
+  </div>
+
+  <div class="poweredby">
+     Powered by <a href="https://gohugo.io/">Hugo</a>.
+  </div>
+
+  </footer>
+
+</div> 
+
+</body>
+</html>
+

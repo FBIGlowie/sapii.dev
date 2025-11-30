@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Archive on Sapii&#39;s Blog</title>
-    <link>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/archive/</link>
+    <link>//localhost:1313/archive/</link>
     <description>Recent content in Archive on Sapii&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <copyright>© 2024 - Sapi or Sapii - This work is licensed under a &lt;a href=&#39;https://creativecommons.org/licenses/by-nc-nd/4.0/&#39; rel=&#39;license&#39;&gt;Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License&lt;/a&gt;.</copyright>
-    <atom:link href="https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/archive/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>© 2025 - Sapi or Sapii - This work is licensed under a &lt;a href=&#39;https://creativecommons.org/licenses/by-nc-nd/4.0/&#39; rel=&#39;license&#39;&gt;Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License&lt;/a&gt;.</copyright>
+    <atom:link href="//localhost:1313/archive/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

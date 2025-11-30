@@ -1,0 +1,29 @@
+{{/* CC attribution for external sources */}}
+{{- $title   := .title   -}}
+{{- $creator := .creator -}}
+{{- $license := or .license "CC BY 4.0" -}}
+{{- $url     := .url     -}}
+{{- $enable  := or .enable false  -}}
+
+{{- if $enable -}}
+  <div class="cc-source" style="font-size: 0.8rem; color: #666;">
+    <span class="cc-source-label">Source:</span>
+    {{- if $creator }}
+      <span class="cc-source-creator">{{ $creator }}</span>
+    {{- end -}}
+    {{- if and $creator $title }}<span class="cc-source-sep"> · </span>{{- end -}}
+    {{- if $title }}
+      <span class="cc-source-title">“{{ $title }}”</span>
+    {{- end -}}
+    {{- if $url }}
+      <span class="cc-source-url">
+        (<a href="{{ $url }}" rel="noopener noreferrer" target="_blank" style="color: inherit;">
+          {{ $url }}
+        </a>)
+      </span>
+    {{- end -}}
+    <span class="cc-source-license-wrapper">
+      — licensed under <span class="cc-source-license">{{ $license }}</span>
+    </span>
+  </div>
+{{- end -}}

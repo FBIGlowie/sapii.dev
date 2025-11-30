@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<meta charset="utf-8" />
+<meta name="author" content="Sapii" />
+
+<meta name="description" content="Sapii&#39;s Blog" />
+
+<meta name="keywords" content="blog, tech, hacking, rev, web, pwn, ctf" />
+
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name="generator" content="Hugo 0.136.5">
+
+<link rel="canonical" href="//localhost:1313/blog/nixos_renegade/">
+<meta property="og:url" content="//localhost:1313/blog/nixos_renegade/">
+  <meta property="og:site_name" content="Sapii&#39;s Blog">
+  <meta property="og:title" content="Nixos on Libre Renegade">
+  <meta property="og:description" content="Nixos on Libre Renegade Over thanksgiving I spent quite the time trying to setup Nixos on the Libre Board Renegade and I’d like to share some things here.
+Existing Documentation So the only pieces of existing documentation I could find is the existing nixos wiki page as well as this blog post. The wiki page details the basic configuration setting up a standard NixOS image for aarch64 however the blog post says that none of the prebuilt images would work ( likely due to the a different U-Boot ) and so it solves this by writing the official Libre Computer U-Boot to the sdImage.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-11-29T12:30:05-05:00">
+    <meta property="article:modified_time" content="2025-11-29T12:30:05-05:00">
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nixos on Libre Renegade">
+  <meta name="twitter:description" content="Nixos on Libre Renegade Over thanksgiving I spent quite the time trying to setup Nixos on the Libre Board Renegade and I’d like to share some things here.
+Existing Documentation So the only pieces of existing documentation I could find is the existing nixos wiki page as well as this blog post. The wiki page details the basic configuration setting up a standard NixOS image for aarch64 however the blog post says that none of the prebuilt images would work ( likely due to the a different U-Boot ) and so it solves this by writing the official Libre Computer U-Boot to the sdImage.">
+
+
+  <meta itemprop="name" content="Nixos on Libre Renegade">
+  <meta itemprop="description" content="Nixos on Libre Renegade Over thanksgiving I spent quite the time trying to setup Nixos on the Libre Board Renegade and I’d like to share some things here.
+Existing Documentation So the only pieces of existing documentation I could find is the existing nixos wiki page as well as this blog post. The wiki page details the basic configuration setting up a standard NixOS image for aarch64 however the blog post says that none of the prebuilt images would work ( likely due to the a different U-Boot ) and so it solves this by writing the official Libre Computer U-Boot to the sdImage.">
+  <meta itemprop="datePublished" content="2025-11-29T12:30:05-05:00">
+  <meta itemprop="dateModified" content="2025-11-29T12:30:05-05:00">
+  <meta itemprop="wordCount" content="1129">
+
+<link rel="stylesheet" href="//localhost:1313/css/layout.css" />
+
+
+<link rel="stylesheet" href="//localhost:1313/css/default-dark.css" />
+
+
+
+
+<title>
+
+
+     Nixos on Libre Renegade 
+
+</title>
+
+</head>
+
+
+<body>
+<div class="main">
+<header>
+
+<div class="header-bar">
+
+  <nav>
+    <div class="siteTitle">
+      <a href="//localhost:1313/">Sapii&#39;s Blog</a>
+    </div> 
+
+    
+    
+    <a class="nav-item" href="//localhost:1313/friends"><div class="nav-item-title">Friends</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/about"><div class="nav-item-title">About</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/blog/"><div class="nav-item-title">Blog</div></a>
+    
+    <a class="nav-item" href="//localhost:1313/tags/"><div class="nav-item-title">Tags</div></a>
+    
+
+  </nav>
+
+</div>
+
+</header>
+
+
+<article class="post">
+    <h1 class="title"> Nixos on Libre Renegade </h1>
+    <div class="content"> <h1 id="nixos-on-libre-renegade">Nixos on Libre Renegade</h1>
+<p>Over thanksgiving I spent quite the time trying to setup Nixos on the Libre Board Renegade and I&rsquo;d like to share some things here.</p>
+<h2 id="existing-documentation">Existing Documentation</h2>
+<p>So the only pieces of existing documentation I could find is the existing <a href="https://wiki.nixos.org/wiki/NixOS_on_ARM/Libre_Computer_ROC-RK3328-CC">nixos wiki</a> page as well as <a href="https://pc-hass.de/blog/nixos-on-renegade/">this blog post</a>. The wiki page details the basic configuration setting up a standard NixOS image for aarch64 however the blog post says that none of the prebuilt images would work ( likely due to the a different U-Boot ) and so it solves this by writing the official Libre Computer U-Boot to the sdImage.</p>
+<h2 id="the-configuration">The Configuration</h2>
+<h3 id="base-configuration">Base Configuration</h3>
+<pre tabindex="0"><code>{
+  description = &#34;NixOS SD card image for Libre Renegade (ROC-RK3328-CC)&#34;;
+
+  inputs = {
+    nixpkgs.url = &#34;github:NixOS/nixpkgs/nixos-25.05&#34;;
+  };
+  outputs = { self, nixpkgs, ... }@inputs:
+    let
+      pkgs = import nixpkgs { system = &#34;aarch64-linux&#34;; };
+      inherit (nixpkgs) lib;
+    in
+    {
+      nixosConfigurations = {
+        renegade = nixpkgs.lib.nixosSystem {
+          system = &#34;aarch64-linux&#34;;
+          modules = [
+            &#34;${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix&#34;
+            ];
+        };
+      };
+      packages = {
+        # For the target system
+        aarch64-linux.renegade = self.nixosConfigurations.renegade.config.system.build.sdImage;
+
+        # For your build system (x86_64)
+        x86_64-linux.renegade = self.nixosConfigurations.renegade.config.system.build.sdImage;
+      };
+
+    };
+}
+</code></pre><p>This is a really simple system configuration flake that outputs the sdImage as a package, however <strong>won&rsquo;t boot due to not having the correct U-Boot</strong>. Build with</p>
+<pre tabindex="0"><code>nix build .#renegade 
+</code></pre><h3 id="adding-u-boot">Adding U-Boot</h3>
+<p>The blog post provides a really handy way to do this. After adding this, the image is bootable, this U-Boot image also enables USB, meaning the systemd service described in the wiki can be ommited ( it actually fails to start even ).</p>
+<pre tabindex="0"><code>  sdImage.postBuildCommands = let
+    rk3328-uboot = fetchurl {
+      url = &#34;https://boot.libre.computer/ci/roc-rk3328-cc&#34;;
+      hash = &#34;sha256-Y5yMmU/LyMVJi94vrYDpBM+4qwUfILwP+gVUToAXteA=&#34;;
+    };
+  in
+  &#39;&#39;
+    dd if=${rk3328-uboot} of=$img conv=fsync,notrunc bs=512 seek=64
+  &#39;&#39;;
+</code></pre>
+
+<div class="cc-source" style="font-size: 0.8rem; color: #666;">
+    <span class="cc-source-label">Source:</span>
+      <span class="cc-source-creator">Gereon Schomber</span><span class="cc-source-sep"> · </span>
+      <span class="cc-source-title">“Nixos on Renegade”</span>
+      <span class="cc-source-url">
+        (<a href="https:/pc-hass.de/blog/nixos-on-renegade/" rel="noopener noreferrer" target="_blank" style="color: inherit;">
+          https:/pc-hass.de/blog/nixos-on-renegade/
+        </a>)
+      </span><span class="cc-source-license-wrapper">
+      — licensed under <span class="cc-source-license">CC BY 4.0</span>
+    </span>
+  </div>
+
+
+<h3 id="adding-bootloader">Adding bootloader</h3>
+<p>U-Boot uses a special text file almost like GRUB stored at <code>/boot/</code> for the boot entries, make sure to enable this if you are to rebuild on the Libre Renegade itself. ( I ended up rebuilding and garbage collecting without this enabled and it deleted the kernel, bricking my system ).</p>
+<pre tabindex="0"><code>boot.loader.generic-extlinux-compatible.enable = true;
+</code></pre><h3 id="configuring-the-fan">Configuring the fan</h3>
+<p>Now the Libre Renegade has a special case you can buy called the &ldquo;LoveRPi Active Cooling Case&rdquo;, which itself comes with a fan. Now the fan is pretty loud, even if you switch to the 3.3v pins instead of 5v. There was a <a href="https://github.com/libre-computer-project/libretech-wiring-tool/commit/f2509bb1f7705d6061782881367a622820cbce59">PR</a> to the libretech-wiring-tool adding DeviceTree files specifically to enable PWM on pins 12. PWM is used to control the fan speed. NixOS already provides configuration options to enable DeviceTree files via <code>hardware.deviceTree.overlays</code>.</p>
+<pre tabindex="0"><code>let
+  pkgs = import nixpkgs { system = &#34;aarch64-linux&#34;; };
+  repo = pkgs.fetchFromGitHub {
+    owner = &#34;libre-computer-project&#34;;
+    repo = &#34;libretech-wiring-tool&#34;;
+    rev = &#34;0078dc04ccb4daabc303d5cec1a4f4222db5b924&#34;;
+    hash = &#34;sha256-ZZvMetODFPamzqaMrf/EMvCS56ri0iKNG2UpKpOgQ4U=&#34;;
+  };
+  pwm-2-dts-file = &#34;${repo}/libre-computer/roc-rk3328-cc/dt/pwm-2.dts&#34;;
+  pwm-2-fan-dts-file = &#34;${repo}/libre-computer/roc-rk3328-cc/dt/pwm-2-fan.dts&#34;;
+in
+{ config, pkgs, ... }:
+{
+  # Enable device tree support
+  hardware.deviceTree.enable = true;
+
+  # Apply the overlays
+  hardware.deviceTree.overlays = [
+    {
+      name = &#34;pwm2&#34;;
+      dtsFile = pwm-2-dts-file;
+    }
+    {
+      name = &#34;pwm2-fan&#34;; 
+      dtsFile = pwm-2-fan-dts-file;
+    }
+  ];
+
+  # Ensure the kernel has pwm-fan and pwm support
+  boot.kernelModules = lib.mkAfter [
+    &#34;pwm-fan&#34;
+    &#34;pwm-rockchip&#34;
+  ];
+}
+</code></pre><p><strong>The fan PWM declaration needs to be below the PWM 2 one because it depends on it.</strong></p>
+<h3 id="controlling-the-fan">Controlling the fan</h3>
+<p>Since the fan speed will be set based on you CPU temperature, you need to read that first. The common path for this is at <code>/sys/class/hwmon/</code>, however the paths after this differ, and you need to find them. The file for the CPU temp is <code>temp1_input</code> and the PWM file is at <code>/pwm1</code>.
+I have this incredibly simple python script derived from the <a href="https://github.com/libre-computer-project/libretech-wiring-tool/pull/15#issuecomment-3537427128">PR</a>, there is also another <a href="https://github.com/angelicadvocate/renegade-fan-control/tree/main?tab=readme-ov-file">project</a> that aims to have enable fan control, you can use their <a href="https://github.com/angelicadvocate/renegade-fan-control/blob/main/fan_control.sh">script</a>, it also provides <a href="https://github.com/angelicadvocate/renegade-fan-control/blob/main/LibreRenegadePWM-img1.png">pictures</a> for where to connect the fan pins to the Renegade pins.</p>
+<h4 id="the-script">The Script:</h4>
+<pre tabindex="0"><code>from pathlib import Path
+import time
+fancontrol = Path(&#34;/sys/class/hwmon/hwmon0/pwm1&#34;)
+cpu_temp = Path(&#34;/sys/class/hwmon/hwmon1/temp1_input&#34;)
+
+cpu_handle = open(cpu_temp, &#34;r&#34;)
+fan_handle = open(fancontrol, &#34;w&#34;)
+
+
+
+while True:
+    temp = int(cpu_handle.read()) / 1000
+    cpu_handle.seek(0)
+    fan_speed = 0
+    if temp &lt;= 50:
+        fan_speed = 0
+    elif temp &lt;= 55:
+        fan_speed = 80
+    elif temp &lt;= 65:
+        fan_speed = 128
+    elif temp &lt;= 75:
+        fan_speed = 192
+    else:  # temp &gt; 75
+        fan_speed = 255
+    fan_handle.write(str(fan_speed))
+    fan_handle.seek(0)
+    print(f&#34;CPU Temp: {temp}, setting fan speed: {fan_speed}&#34;)
+    time.sleep(1)
+</code></pre><p>The service definition for this:</p>
+<pre tabindex="0"><code>  systemd.services.simple-fan-control = {
+    enable = true;
+    wantedBy = [ &#34;default.target&#34; ];
+    description = &#34;Incredibly Simple python fan control script&#34;;
+    serviceConfig = {
+      Restart = &#34;always&#34;;
+      RestartSec = 5;
+      ExecStart = &#39;&#39;${pkgs.python3}/bin/python ${fancontrol-script}&#39;&#39;;
+    };
+  };
+</code></pre><p>Beware, the script will start at boot but the PWM or CPU files won&rsquo;t exist yet, so it will fail and keep restarting until they do.</p>
+<h3 id="closing-thoughts">Closing thoughts</h3>
+<p>I love this little thing, it serves as a good K3S control plane server. Make sure to enable binfmt in your system&rsquo;s nix configuration so you can cross compile.</p>
+<h1 id="full-configuration">Full Configuration</h1>
+<pre tabindex="0"><code>{
+  description = &#34;NixOS SD card image for Libre Renegade (ROC-RK3328-CC)&#34;;
+
+  inputs = {
+    nixpkgs.url = &#34;github:NixOS/nixpkgs/nixos-25.05&#34;;
+  };
+  outputs =
+    { self, nixpkgs, ... }@inputs:
+    let
+      pkgs = import nixpkgs { system = &#34;aarch64-linux&#34;; };
+      repo = pkgs.fetchFromGitHub {
+        owner = &#34;libre-computer-project&#34;;
+        repo = &#34;libretech-wiring-tool&#34;;
+        rev = &#34;0078dc04ccb4daabc303d5cec1a4f4222db5b924&#34;;
+        hash = &#34;sha256-ZZvMetODFPamzqaMrf/EMvCS56ri0iKNG2UpKpOgQ4U=&#34;;
+      };
+      pwm-2-dts-file = &#34;${repo}/libre-computer/roc-rk3328-cc/dt/pwm-2.dts&#34;;
+      pwm-2-fan-dts-file = &#34;${repo}/libre-computer/roc-rk3328-cc/dt/pwm-2-fan.dts&#34;;
+      fancontrol-script = pkgs.writeTextFile {
+        name = &#34;fancontrol-script&#34;;
+        text = &#39;&#39;
+          from pathlib import Path
+          import time
+          fancontrol = Path(&#34;/sys/class/hwmon/hwmon0/pwm1&#34;)
+          cpu_temp = Path(&#34;/sys/class/hwmon/hwmon1/temp1_input&#34;)
+
+          cpu_handle = open(cpu_temp, &#34;r&#34;)
+          fan_handle = open(fancontrol, &#34;w&#34;)
+
+
+
+          while True:
+              temp = int(cpu_handle.read()) / 1000
+              cpu_handle.seek(0)
+              fan_speed = 0
+              if temp &lt;= 50:
+                  fan_speed = 0
+              elif temp &lt;= 55:
+                  fan_speed = 80
+              elif temp &lt;= 65:
+                  fan_speed = 128
+              elif temp &lt;= 75:
+                  fan_speed = 192
+              else:  # temp &gt; 75
+                  fan_speed = 255
+              fan_handle.write(str(fan_speed))
+              fan_handle.seek(0)
+              print(f&#34;CPU Temp: {temp}, setting fan speed: {fan_speed}&#34;)
+              time.sleep(1)
+        &#39;&#39;;
+      };
+      inherit (nixpkgs) lib;
+    in
+    {
+      nixosConfigurations = {
+        renegade = nixpkgs.lib.nixosSystem {
+          system = &#34;aarch64-linux&#34;;
+          modules = [
+            &#34;${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix&#34;
+            (
+              {
+                config,
+                lib,
+                pkgs,
+                ...
+              }:
+              {
+                systemd.services.simple-fan-control = {
+                  enable = true;
+                  wantedBy = [ &#34;default.target&#34; ];
+                  description = &#34;Incredibly Simple python fan control script&#34;;
+                  serviceConfig = {
+                    Restart = &#34;always&#34;;
+                    RestartSec = 5;
+                    ExecStart = &#39;&#39;${pkgs.python3}/bin/python ${fancontrol-script}&#39;&#39;;
+                  };
+                };
+                sdImage.postBuildCommands =
+                  let
+                    rk3328-uboot = builtins.fetchurl {
+                      url = &#34;https://boot.libre.computer/ci/roc-rk3328-cc&#34;;
+                      sha256 = &#34;Y5yMmU/LyMVJi94vrYDpBM+4qwUfILwP+gVUToAXteA=&#34;;
+                    };
+                  in
+                  &#39;&#39;
+                    dd if=${rk3328-uboot} of=$img conv=fsync,notrunc bs=512 seek=64
+                  &#39;&#39;;
+                boot.loader.generic-extlinux-compatible.enable = true;
+                # Enable device tree support
+                hardware.deviceTree.enable = true;
+
+                # Apply the overlays
+                hardware.deviceTree.overlays = [
+                  {
+                    name = &#34;pwm2&#34;;
+                    dtsFile = pwm-2-dts-file;
+                  }
+                  {
+                    name = &#34;pwm2-fan&#34;;
+                    dtsFile = pwm-2-fan-dts-file;
+                  }
+                ];
+
+                # Ensure the kernel has pwm-fan and pwm support
+                boot.kernelModules = lib.mkAfter [
+                  &#34;pwm-fan&#34;
+                  &#34;pwm-rockchip&#34;
+                ];
+
+              }
+            )
+
+          ];
+        };
+      };
+      packages = {
+        # For the target system
+        aarch64-linux.renegade = self.nixosConfigurations.renegade.config.system.build.sdImage;
+
+        # For your build system (x86_64)
+        x86_64-linux.renegade = self.nixosConfigurations.renegade.config.system.build.sdImage;
+      };
+
+    };
+}
+</code></pre> </div>
+    <footer class="post-footer">
+
+  <div class="post-footer-data">
+            
+<div class="tags">
+  
+</div>
+
+    
+    <hr>
+    
+    <div class="date"> Published: 2025-11-29</div>
+    <div class="updated"> Updated:   2025-11-29</div>
+  </div>
+</footer>
+
+
+
+</article>
+
+  <footer>
+
+  <div class="social-links-footer">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <div class="social-link">
+  
+  </div>
+
+</div>
+
+
+  <div class="copyright"> 
+    
+      © 2025 - Sapi or Sapii - This work is licensed under a <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/' rel='license'>Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+    
+  </div>
+
+  <div class="poweredby">
+     Powered by <a href="https://gohugo.io/">Hugo</a>.
+  </div>
+
+  </footer>
+
+</div> 
+
+</body>
+</html>
+

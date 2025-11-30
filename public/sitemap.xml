@@ -2,24 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/blog/</loc>
+    <loc>//localhost:1313/blog/</loc>
+    <lastmod>2025-11-29T12:30:05-05:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/nixos_renegade/</loc>
+    <lastmod>2025-11-29T12:30:05-05:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/blog/internship/</loc>
     <lastmod>2024-11-30T18:39:41-05:00</lastmod>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/blog/internship/</loc>
-    <lastmod>2024-11-30T18:39:41-05:00</lastmod>
-  </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/</loc>
+    <loc>//localhost:1313/</loc>
     <lastmod>2024-11-30T16:00:00-05:00</lastmod>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/about/</loc>
+    <loc>//localhost:1313/about/</loc>
     <lastmod>2024-11-21T00:37:34-05:00</lastmod>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/archive/</loc>
+    <loc>//localhost:1313/friends/</loc>
+    <lastmod>2024-11-21T00:37:34-05:00</lastmod>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/categories/</loc>
+    <loc>//localhost:1313/blog/organizing_nixos/</loc>
+    <lastmod>2024-11-21T00:37:34-05:00</lastmod>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/series/</loc>
+    <loc>//localhost:1313/archive/</loc>
   </url><url>
-    <loc>https://vigilant-disco-q7qgq7qj95xwhpqq-1313.app.github.dev:1313/tags/</loc>
+    <loc>//localhost:1313/categories/</loc>
+  </url><url>
+    <loc>//localhost:1313/series/</loc>
+  </url><url>
+    <loc>//localhost:1313/tags/</loc>
   </url>
 </urlset>

@@ -1,0 +1,21 @@
+{{/* Shortcode wrapper for CC attribution of external sources.
+
+Usage in Markdown:
+
+{{< cc-source
+    title="Great Photo of a Cat"
+    creator="Jane Doe"
+    license="CC BY-SA 4.0"
+    url="https://example.com/cat-photo"
+>}}
+
+*/}}
+
+{{ partial "cc-source.html" (dict
+  "title"   (.Get "title")
+  "creator" (.Get "creator")
+  "license" (.Get "license")
+  "url"     (.Get "url")
+  "enable"  (.Get "enable")
+) }}
+
