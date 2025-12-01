@@ -56,15 +56,15 @@ nix build .#renegade
 The blog post provides a really handy way to do this. After adding this, the image is bootable, this U-Boot image also enables USB, meaning the systemd service described in the wiki can be ommited ( it actually fails to start even ).
 
 ```nix {style=gruvbox}
-  sdImage.postBuildCommands = let
-    rk3328-uboot = fetchurl {
-      url = "https://boot.libre.computer/ci/roc-rk3328-cc";
-      hash = "sha256-Y5yMmU/LyMVJi94vrYDpBM+4qwUfILwP+gVUToAXteA=";
-    };
-  in
-  ''
-    dd if=${rk3328-uboot} of=$img conv=fsync,notrunc bs=512 seek=64
-  '';
+sdImage.postBuildCommands = let
+  rk3328-uboot = fetchurl {
+    url = "https://boot.libre.computer/ci/roc-rk3328-cc";
+    hash = "sha256-Y5yMmU/LyMVJi94vrYDpBM+4qwUfILwP+gVUToAXteA=";
+  };
+in
+''
+  dd if=${rk3328-uboot} of=$img conv=fsync,notrunc bs=512 seek=64
+'';
 ```
 {{< cc-source
   title="Nixos on Renegade"
@@ -161,16 +161,16 @@ while True:
 The service definition for this:
 
 ```nix {style=gruvbox}
-  systemd.services.simple-fan-control = {
-    enable = true;
-    wantedBy = [ "default.target" ];
-    description = "Incredibly Simple python fan control script";
-    serviceConfig = {
-      Restart = "always";
-      RestartSec = 5;
-      ExecStart = ''${pkgs.python3}/bin/python ${fancontrol-script}'';
-    };
+systemd.services.simple-fan-control = {
+  enable = true;
+  wantedBy = [ "default.target" ];
+  description = "Incredibly Simple python fan control script";
+  serviceConfig = {
+    Restart = "always";
+    RestartSec = 5;
+    ExecStart = ''${pkgs.python3}/bin/python ${fancontrol-script}'';
   };
+};
 ```
 Beware, the script will start at boot but the PWM or CPU files won't exist yet, so it will fail and keep restarting until they do.
 ### Closing thoughts
