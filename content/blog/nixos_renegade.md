@@ -14,7 +14,7 @@ So the only pieces of existing documentation I could find is the existing [nixos
 
 ## The Configuration
 ### Base Configuration
-```nix
+```nix {style=gruvbox}
 {
   description = "NixOS SD card image for Libre Renegade (ROC-RK3328-CC)";
 
@@ -55,7 +55,7 @@ nix build .#renegade
 ### Adding U-Boot
 The blog post provides a really handy way to do this. After adding this, the image is bootable, this U-Boot image also enables USB, meaning the systemd service described in the wiki can be ommited ( it actually fails to start even ).
 
-```nix
+```nix {style=gruvbox}
   sdImage.postBuildCommands = let
     rk3328-uboot = fetchurl {
       url = "https://boot.libre.computer/ci/roc-rk3328-cc";
@@ -76,14 +76,14 @@ The blog post provides a really handy way to do this. After adding this, the ima
 
 ### Adding bootloader
 U-Boot uses a special text file almost like GRUB stored at `/boot/` for the boot entries, make sure to enable this if you are to rebuild on the Libre Renegade itself. ( I ended up rebuilding and garbage collecting without this enabled and it deleted the kernel, bricking my system ).   
-```nix
+```nix {style=gruvbox}
 boot.loader.generic-extlinux-compatible.enable = true;
 ```
 ### Configuring the fan 
 
 Now the Libre Renegade has a special case you can buy called the "LoveRPi Active Cooling Case", which itself comes with a fan. Now the fan is pretty loud, even if you switch to the 3.3v pins instead of 5v. There was a [PR](https://github.com/libre-computer-project/libretech-wiring-tool/commit/f2509bb1f7705d6061782881367a622820cbce59) to the libretech-wiring-tool adding DeviceTree files specifically to enable PWM on pins 12. PWM is used to control the fan speed. NixOS already provides configuration options to enable DeviceTree files via `hardware.deviceTree.overlays`.
 
-```nix
+```nix {style=gruvbox}
 let
   pkgs = import nixpkgs { system = "aarch64-linux"; };
   repo = pkgs.fetchFromGitHub {
@@ -128,7 +128,7 @@ Since the fan speed will be set based on you CPU temperature, you need to read t
 I have this incredibly simple python script derived from the [PR](https://github.com/libre-computer-project/libretech-wiring-tool/pull/15#issuecomment-3537427128), there is also another [project](https://github.com/angelicadvocate/renegade-fan-control/tree/main?tab=readme-ov-file) that aims to have enable fan control, you can use their [script](https://github.com/angelicadvocate/renegade-fan-control/blob/main/fan_control.sh), it also provides [pictures](https://github.com/angelicadvocate/renegade-fan-control/blob/main/LibreRenegadePWM-img1.png) for where to connect the fan pins to the Renegade pins.
 #### The Script:
 
-```python
+```python {style=gruvbox}
 from pathlib import Path
 import time
 fancontrol = Path("/sys/class/hwmon/hwmon0/pwm1")
@@ -160,7 +160,7 @@ while True:
 ```
 The service definition for this:
 
-```nix
+```nix {style=gruvbox}
   systemd.services.simple-fan-control = {
     enable = true;
     wantedBy = [ "default.target" ];
@@ -179,7 +179,7 @@ I love this little thing, it serves as a good K3S control plane server. Make sur
 
 # Full Configuration
 
-```nix
+```nix {style=gruvbox}
 {
   description = "NixOS SD card image for Libre Renegade (ROC-RK3328-CC)";
 
