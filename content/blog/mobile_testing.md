@@ -1,6 +1,6 @@
 +++
 date = '2025-12-17T09:29:48-05:00'
-draft = true
+draft = false
 title = 'Mobile_testing'
 +++
 
